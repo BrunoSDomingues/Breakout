@@ -5,36 +5,58 @@ using UnityEngine;
 public class BallMovement : MonoBehaviour
 {
 
-    [Range(1, 15)]
-    public float ballSpeed = 5.0f;
+    public float ballSpeed = 4.0f;
 
     private Vector3 direction;
+    float dirX, dirY;
 
     // Start is called before the first frame update
     void Start()
 
     {
-        float dirX = Random.Range(-5.0f, 5.0f);
-        float dirY = Random.Range(1.0f, 5.0f);
-
-        direction = new Vector3(dirX, dirY).normalized;
+        Respawn();
     }
 
     // Update is called once per frame
     void Update()
     {
         transform.Translate(direction * Time.deltaTime * ballSpeed);
+    }
 
-        Vector2 viewportPosition = Camera.main.WorldToViewportPoint(transform.position);
-
-        if (viewportPosition.x < 0 || viewportPosition.x > 1)
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        switch (col.tag)
         {
-            direction = new Vector3(-direction.x, direction.y);
-        }
-        if (viewportPosition.y < 0 || viewportPosition.y > 1)
-        {
-            direction = new Vector3(direction.x, -direction.y);
-        }
+            case "Paddle":
+                dirX = Random.Range(-5.0f, 5.0f);
+                dirY = Random.Range(1.0f, 5.0f);
+                direction = new Vector3(dirX, dirY).normalized;
+                break;
 
+            case "Brick":
+                direction = new Vector3(direction.x, -direction.y);
+                break;
+
+            case "Sides":
+                direction = new Vector3(-direction.x, direction.y);
+                break;
+
+            case "Top":
+                direction = new Vector3(direction.x, -direction.y);
+                break;
+
+            case "Bottom":
+                Respawn();
+                break;
+        }
+    }
+
+    public void Respawn()
+    {
+        transform.position = new Vector3(0, -4.0f);
+        dirX = Random.Range(-5.0f, 5.0f);
+        dirY = Random.Range(1.0f, 5.0f);
+
+        direction = new Vector3(dirX, dirY).normalized;
     }
 }

@@ -16,5 +16,10 @@ public class PaddleMovement : MonoBehaviour
     {
         float inputX = Input.GetAxis("Horizontal");
         transform.Translate(new Vector3(inputX, 0, 0) * Time.deltaTime * paddleSpeed);
+
+        if (this.transform.position.x <= 20 || this.transform.position.x >= 520)
+        {
+
+        }
     }
 }
