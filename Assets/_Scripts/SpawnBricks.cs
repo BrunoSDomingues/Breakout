@@ -1,26 +1,38 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SpawnBricks : MonoBehaviour
 {
     public GameObject Brick;
-    // Start is called before the first frame update
+    GameManager gm;
+
     void Start()
     {
-        for (int i = 0; i < 6; i++)
+        gm = GameManager.GetInstance();
+        GameManager.changeStateDelegate += Spawn;
+        Spawn();
+    }
+
+    void Spawn()
+    {
+        if (gm.gameState == GameManager.GameState.GAME)
         {
-            for (int j = 0; j < 13; j++)
+            foreach (Transform child in transform) GameObject.Destroy(child.gameObject);
+            for (int i = 0; i < 6; i++)
             {
-                Vector3 position = new Vector3(-3.5f + 1.4f * i, 5.3f - 0.45f * j);
-                Instantiate(Brick, position, Quaternion.identity, transform);
+                for (int j = 0; j < 13; j++)
+                {
+                    Vector3 position = new Vector3(-3.5f + 1.4f * i, 5.3f - 0.45f * j);
+                    Instantiate(Brick, position, Quaternion.identity, transform);
+                }
             }
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
-
+        if (transform.childCount <= 0 && gm.gameState == GameManager.GameState.GAME)
+        {
+            gm.ChangeState(GameManager.GameState.ENDGAME);
+        }
     }
 }

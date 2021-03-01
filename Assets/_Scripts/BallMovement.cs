@@ -1,25 +1,34 @@
-﻿using System.Collections;
+﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class BallMovement : MonoBehaviour
 {
 
     public float ballSpeed = 4.0f;
 
-    private Vector3 direction;
+    private Vector3 direction, startPosition;
+    public GameManager gm;
     float dirX, dirY;
 
     // Start is called before the first frame update
     void Start()
 
     {
-        Respawn();
+        transform.position = new Vector3(0, -4.0f);
+        startPosition = transform.position;
+        dirX = Random.Range(-5.0f, 5.0f);
+        dirY = Random.Range(1.0f, 5.0f);
+
+        direction = new Vector3(dirX, dirY).normalized;
+
+        gm = GameManager.GetInstance();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (gm.gameState != GameManager.GameState.GAME) return;
         transform.Translate(direction * Time.deltaTime * ballSpeed);
     }
 
@@ -35,6 +44,7 @@ public class BallMovement : MonoBehaviour
 
             case "Brick":
                 direction = new Vector3(direction.x, -direction.y);
+                gm.points += 10;
                 break;
 
             case "Sides":
@@ -53,10 +63,26 @@ public class BallMovement : MonoBehaviour
 
     public void Respawn()
     {
-        transform.position = new Vector3(0, -4.0f);
+        gm.lives--;
+        if (gm.lives <= 0 && gm.gameState == GameManager.GameState.GAME)
+        {
+            gm.ChangeState(GameManager.GameState.ENDGAME);
+        }
+        transform.position = startPosition;
+        direction = Vector3.zero;
+        StartCoroutine(WaitKeyPress());
+    }
+
+    IEnumerator WaitKeyPress()
+    {
+        while (!Input.GetKey("space"))
+        {
+            yield return null;
+            Debug.Log("EEE");
+        }
+
         dirX = Random.Range(-5.0f, 5.0f);
         dirY = Random.Range(1.0f, 5.0f);
-
         direction = new Vector3(dirX, dirY).normalized;
     }
 }
