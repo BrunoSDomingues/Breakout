@@ -3,10 +3,15 @@
 public class SpawnBricks : MonoBehaviour
 {
     public GameObject Brick;
+    public GameObject ball;
+    public BallMovement ballMovement;
+    public PaddleMovement paddleMovement;
     GameManager gm;
 
     void Start()
     {
+        ballMovement = FindObjectOfType<BallMovement>();
+        paddleMovement = FindObjectOfType<PaddleMovement>();
         gm = GameManager.GetInstance();
         GameManager.changeStateDelegate += Spawn;
         Spawn();
@@ -14,7 +19,7 @@ public class SpawnBricks : MonoBehaviour
 
     void Spawn()
     {
-        if (gm.gameState == GameManager.GameState.GAME)
+        if (gm.gameState == GameManager.GameState.GAME && gm.oldGameState != GameManager.GameState.PAUSE)
         {
             foreach (Transform child in transform) GameObject.Destroy(child.gameObject);
             for (int i = 0; i < 6; i++)
@@ -32,7 +37,10 @@ public class SpawnBricks : MonoBehaviour
     {
         if (transform.childCount <= 0 && gm.gameState == GameManager.GameState.GAME)
         {
-            gm.ChangeState(GameManager.GameState.ENDGAME);
+            gm.level++;
+            paddleMovement.ResetPosition();
+            ballMovement.ResetPosition();
+            Spawn();
         }
     }
 }

@@ -4,11 +4,12 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Sides
   - Top
   - Bottom
   - Paddle
   - Brick
+  - Ball
+  - Sides
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - Player
   - 
   - 
   - 

@@ -5,22 +5,19 @@ using System.Collections.Generic;
 public class BallMovement : MonoBehaviour
 {
 
-    public float ballSpeed = 4.0f;
-
     private Vector3 direction, startPosition;
     public GameManager gm;
+    public PaddleMovement paddleMovement;
+    public float ballSpeed;
+    public GameObject hitSound, blockSound, deathSound;
     float dirX, dirY;
 
     // Start is called before the first frame update
     void Start()
-
     {
-        transform.position = new Vector3(0, -4.0f);
+        transform.position = new Vector3(0, -4.5f);
         startPosition = transform.position;
-        dirX = Random.Range(-5.0f, 5.0f);
-        dirY = Random.Range(1.0f, 5.0f);
-
-        direction = new Vector3(dirX, dirY).normalized;
+        StartCoroutine(WaitKeyPress());
 
         gm = GameManager.GetInstance();
     }
@@ -28,7 +25,9 @@ public class BallMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (gm.gameState == GameManager.GameState.MENU) ResetPosition();
         if (gm.gameState != GameManager.GameState.GAME) return;
+        ballSpeed = ((gm.level - 1) * 1.2f) + 5.0f;
         transform.Translate(direction * Time.deltaTime * ballSpeed);
     }
 
@@ -40,25 +39,37 @@ public class BallMovement : MonoBehaviour
                 dirX = Random.Range(-5.0f, 5.0f);
                 dirY = Random.Range(1.0f, 5.0f);
                 direction = new Vector3(dirX, dirY).normalized;
+                hitSound.GetComponent<AudioSource>().Play();
                 break;
 
             case "Brick":
                 direction = new Vector3(direction.x, -direction.y);
-                gm.points += 10;
+                gm.points += gm.level * 10;
+                blockSound.GetComponent<AudioSource>().Play();
                 break;
 
             case "Sides":
                 direction = new Vector3(-direction.x, direction.y);
+                hitSound.GetComponent<AudioSource>().Play();
                 break;
 
             case "Top":
                 direction = new Vector3(direction.x, -direction.y);
+                hitSound.GetComponent<AudioSource>().Play();
                 break;
 
             case "Bottom":
+                deathSound.GetComponent<AudioSource>().Play();
                 Respawn();
                 break;
         }
+    }
+
+    public void ResetPosition()
+    {
+        transform.position = startPosition;
+        direction = Vector3.zero;
+        StartCoroutine(WaitKeyPress());
     }
 
     public void Respawn()
@@ -68,9 +79,8 @@ public class BallMovement : MonoBehaviour
         {
             gm.ChangeState(GameManager.GameState.ENDGAME);
         }
-        transform.position = startPosition;
-        direction = Vector3.zero;
-        StartCoroutine(WaitKeyPress());
+
+        ResetPosition();
     }
 
     IEnumerator WaitKeyPress()
@@ -78,7 +88,6 @@ public class BallMovement : MonoBehaviour
         while (!Input.GetKey("space"))
         {
             yield return null;
-            Debug.Log("EEE");
         }
 
         dirX = Random.Range(-5.0f, 5.0f);

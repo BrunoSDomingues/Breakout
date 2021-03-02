@@ -12,11 +12,11 @@ public class UI_GameOver : MonoBehaviour
 
         if (gm.lives > 0)
         {
-            message.text = "You win!";
+            message.text = "ERROR: You're not supposed to see this text!";
         }
         else
         {
-            message.text = "Game Over";
+            message.text = "You scored " + gm.points + " points!";
         }
     }
 
