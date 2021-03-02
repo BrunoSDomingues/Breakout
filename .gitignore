@@ -72,3 +72,6 @@ crashlytics-build.properties
 
 # VSCode settings to hide files in explorer to get a cleaner view
 .vscode/
+
+# Hide compressed build folder
+*.zip

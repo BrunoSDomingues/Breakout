@@ -48,12 +48,11 @@ public class PaddleMovement : MonoBehaviour
         if (canMove) transform.Translate(new Vector3(inputX, 0, 0) * Time.deltaTime * paddleSpeed);
         else if (oldX != inputX && inputX != 0)
         {
-            Debug.Log("old: " + oldX + ", new: " + inputX);
             canMove = true;
             paddleSpeed = 10;
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape) && gm.gameState == GameManager.GameState.GAME)
+        if (Input.GetKeyDown(KeyCode.P) && gm.gameState == GameManager.GameState.GAME)
         {
             gm.ChangeState(GameManager.GameState.PAUSE);
         }

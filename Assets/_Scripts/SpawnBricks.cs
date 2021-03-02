@@ -3,7 +3,6 @@
 public class SpawnBricks : MonoBehaviour
 {
     public GameObject Brick;
-    public GameObject ball;
     public BallMovement ballMovement;
     public PaddleMovement paddleMovement;
     GameManager gm;
@@ -22,11 +21,11 @@ public class SpawnBricks : MonoBehaviour
         if (gm.gameState == GameManager.GameState.GAME && gm.oldGameState != GameManager.GameState.PAUSE)
         {
             foreach (Transform child in transform) GameObject.Destroy(child.gameObject);
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 9; i++)
             {
-                for (int j = 0; j < 13; j++)
+                for (int j = 0; j < 9; j++)
                 {
-                    Vector3 position = new Vector3(-3.5f + 1.4f * i, 5.3f - 0.45f * j);
+                    Vector3 position = new Vector3(-6.6f + 1.7f * i, 4.7f - 0.7f * j);
                     Instantiate(Brick, position, Quaternion.identity, transform);
                 }
             }
@@ -38,6 +37,7 @@ public class SpawnBricks : MonoBehaviour
         if (transform.childCount <= 0 && gm.gameState == GameManager.GameState.GAME)
         {
             gm.level++;
+            if (gm.level % 2 == 1 && gm.level > 1) gm.lives++;
             paddleMovement.ResetPosition();
             ballMovement.ResetPosition();
             Spawn();
